@@ -768,3 +768,21 @@ services:
     links:
     - alerta
     command: alerta send -r web01 -e NodeUp -E Production -S Website -s major -t "SIEMonster is UP." -v AWESOME
+    
+  correlate:
+    labels:
+      io.rancher.container.start_once: 'true'
+      io.rancher.container.pull_image: always
+    image: ikuturso/correlate
+    tty: true
+    stdin_open: true
+    links:
+    - alerta
+    - gmailrelay
+    - es-client-1:elasticsearchhost
+    cap_add:
+    - SYS_NICE
+    - SYS_TIME
+    volumes:
+    - /opt/containers/${SITE_DNAME}/opt/logs:/opt/logs
+    - /opt/containers/${SITE_DNAME}/opt/rules:/opt/rules
